@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>646A3E15-DD3F-486A-A32C-6A0DE1542E9D</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Dummy Test</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>2C51076D-FA51-4FE7-95BF-F93A2330CD5B</key>
+		<string>https://github.com/cocoa-factory/test.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Dummy Test.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>2C51076D-FA51-4FE7-95BF-F93A2330CD5B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/cocoa-factory/test.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>2C51076D-FA51-4FE7-95BF-F93A2330CD5B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2C51076D-FA51-4FE7-95BF-F93A2330CD5B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>CDSOTest</string>
+		</dict>
+	</array>
+</dict>
+</plist>

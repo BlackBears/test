@@ -11,70 +11,20 @@
 #import "AddViewController.h"
 #import "List.h"
 #import "Item.h"
-@interface WishListView ()
 
+@interface WishListView ()
+@property (nonatomic, copy) NSArray *items;
 @end
 
 @implementation WishListView
 
-- (NSManagedObjectContext *)managedObjectContext {
-    NSManagedObjectContext *context = nil;
-    id delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate respondsToSelector:@selector(managedObjectContext)]) {
-        context = [delegate managedObjectContext];
-    }
-    return context;
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    // Fetch the lists from persistent data store
-    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Item"];
-    self.lists = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
-    [self.tableView reloadData];
-}
-
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.items.count;
 }
 
@@ -83,38 +33,36 @@
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    // Configure the cell...
-    NSManagedObject *item = [self.items objectAtIndex:indexPath.row];
-    [cell.textLabel setText:[item valueForKey:@"list"]];
+    Item *item = self.items[indexPath.row];
+    cell.textLabel.text = item.name;
     
     return cell;
 }
 
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
 
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSManagedObjectContext *context = [self managedObjectContext];
     
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete object from database
-        [context deleteObject:[self.items objectAtIndex:indexPath.row]];
+        // Delete object from managed object context
+        Item *deletionItem = self.items[indexPath.row];
+        [[self managedObjectContext] deleteObject:deletionItem];
         
         NSError *error = nil;
-        if (![context save:&error]) {
+        if (![[self managedObjectContext] save:&error]) {
             NSLog(@"Can't Delete! %@ %@", error, [error localizedDescription]);
             return;
         }
+        _items = nil;
         
-        // Remove device from table view
-        [self.items removeObjectAtIndex:indexPath.row];
-        [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [tableView beginUpdates];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [tableView endUpdates];
     }
 }
 
@@ -122,26 +70,55 @@
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+}
+
+- (NSArray *)items {
+    if( !_items ) {
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Item"];
+        NSError *fetchError = nil;
+        _items = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&fetchError];
+        if( !_items ) {
+            NSLog(@"ERROR while fetching items %@,%@",fetchError,fetchError.userInfo);
+        }
+    }
+    return _items;
 }
 
 
 #pragma mark - Segue
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    Item *selectedItem = nil;
+    AddViewController *destViewController = segue.destinationViewController;
+    
     if ([[segue identifier] isEqualToString:@"ShowDetails"]) {
-        NSManagedObject *selectedItem = [self.items objectAtIndex:[[self.tableView indexPathForSelectedRow] row]];
-        AddViewController *destViewController = segue.destinationViewController;
-        destViewController.items = selectedItem;
+        //  if there's a selected item, display it.
+        NSIndexPath *indexPath = [[self tableView] indexPathForSelectedRow];
+        selectedItem = self.items[indexPath.row];
+        destViewController.item = selectedItem;
+        destViewController.completionBlock = ^(BOOL saved) {
+            if( saved ) {
+                _items = nil;
+                [[self tableView] reloadData];
+            }
+        };
+    }
+    else if( [[segue identifier] isEqualToString:@"AddItem"] ) {
+        //  if there's not, then create one
+        selectedItem = [NSEntityDescription insertNewObjectForEntityForName:@"Item" inManagedObjectContext:self.managedObjectContext];
+        selectedItem.list = self.list;
+        destViewController.item = selectedItem;
+        destViewController.completionBlock = ^(BOOL saved){
+            if( !saved ) {
+                [[self managedObjectContext] deleteObject:selectedItem];
+            }
+            else {
+                _items = nil;
+                [[self tableView] reloadData];
+            }
+        };
     }
 }
 

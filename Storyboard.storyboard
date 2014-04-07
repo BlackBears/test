@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="BaR-6o-ac2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="BaR-6o-ac2">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
@@ -63,6 +63,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="7hw-8I-XrV" kind="modal" identifier="ShowDetails" id="uyb-rT-gSf"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -73,14 +76,14 @@
                     <navigationItem key="navigationItem" id="cgr-b0-sUV">
                         <barButtonItem key="rightBarButtonItem" title="Item" systemItem="add" id="Vgr-4m-cpg">
                             <connections>
-                                <segue destination="7hw-8I-XrV" kind="modal" id="cJ4-NS-JnO"/>
+                                <segue destination="7hw-8I-XrV" kind="modal" identifier="AddItem" id="cJ4-NS-JnO"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aiO-F1-kgo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="312" y="285"/>
+            <point key="canvasLocation" x="364" y="285"/>
         </scene>
         <!--Add View Controller-->
         <scene sceneID="bQs-eO-3Io">
@@ -184,4 +187,7 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="cJ4-NS-JnO"/>
+    </inferredMetricsTieBreakers>
 </document>

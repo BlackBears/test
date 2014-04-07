@@ -18,51 +18,31 @@
 
 @implementation AddViewController
 
-- (NSManagedObjectContext *)managedObjectContext {
-    NSManagedObjectContext *context = nil;
-    id delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate respondsToSelector:@selector(managedObjectContext)]) {
-        context = [delegate managedObjectContext];
-    }
-    return context;
-}
+#pragma mark - View lifecycle
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     
+    //  use the represented model object to fill in the text fields
+    self.name.text = _item.name;
+    self.price.text = _item.price;
+    self.desc.text = _item.desc;
 }
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+  
 
 - (IBAction)cancel:(id)sender {
+    if( self.completionBlock )
+        self.completionBlock(NO);
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)save:(id)sender {
     NSManagedObjectContext *context = [self managedObjectContext];
     
-    // Create a new managed object
-    NSManagedObject *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"Item" inManagedObjectContext:context];
-   
+    self.item.name = self.name.text;
+    self.item.price = self.price.text;
+    self.item.desc = self.desc.text;
     
-    
-    [newItem setValue:self.name.text forKey:@"itemName"];
-    [newItem setValue:self.price.text forKey:@"price"];
-    [newItem setValue:self.desc.text forKey:@"description"];
     
     NSError *error = nil;
     // Save the object to persistent store
@@ -70,6 +50,9 @@
         NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
     }
     
+    if( self.completionBlock ) {
+        self.completionBlock(YES);
+    }
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 @end

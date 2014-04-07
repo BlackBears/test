@@ -18,37 +18,17 @@
 
 @implementation ViewController
 
-- (NSManagedObjectContext *)managedObjectContext {
-    NSManagedObjectContext *context = nil;
-    id delegate = [[UIApplication sharedApplication] delegate];
-    if ([delegate respondsToSelector:@selector(managedObjectContext)]) {
-        context = [delegate managedObjectContext];
-    }
-    return context;
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
     // Fetch the lists from persistent data store
-    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"List"];
-    self.lists = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    self.lists = [[[self managedObjectContext] executeFetchRequest:fetchRequest error:nil] mutableCopy];
     [self.tableView reloadData];
 }
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     // Uncomment the following line to preserve selection between presentations.
@@ -58,23 +38,15 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
     return self.lists.count;
 }
 
@@ -114,8 +86,6 @@
             
             
         }
-        
-        //[self dismissViewControllerAnimated:YES completion:nil];
     }
    
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
@@ -150,4 +120,16 @@
         [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
+
+#pragma mark - Storyboard support
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    WishListView *wishListController = segue.destinationViewController;
+    
+    NSIndexPath *indexPath = [[self tableView] indexPathForSelectedRow];
+    List *selectedList = self.lists[indexPath.row];
+    wishListController.list = selectedList;
+    wishListController.managedObjectContext = self.managedObjectContext;
+}
+
 @end

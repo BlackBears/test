@@ -6,9 +6,10 @@
 //  Copyright (c) 2014 Higgins Software Design. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 @interface ViewController : UITableViewController <UIAlertViewDelegate>
+
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+
 @property (strong) NSMutableArray *lists;
 @property (strong) NSMutableArray *items;
 

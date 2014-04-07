@@ -6,11 +6,13 @@
 //  Copyright (c) 2014 Higgins Software Design. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@class List;
 
 @interface WishListView : UITableViewController
-@property (strong) NSMutableArray *lists;
-@property (strong) NSMutableArray *items;
+
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) List *list;
+
 @property (strong, nonatomic) NSArray *DetailModal;
 
 @end
