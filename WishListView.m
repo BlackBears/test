@@ -77,6 +77,7 @@
 - (NSArray *)items {
     if( !_items ) {
         NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Item"];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"list = %@",self.list];
         NSError *fetchError = nil;
         _items = [[self managedObjectContext] executeFetchRequest:fetchRequest error:&fetchError];
         if( !_items ) {
