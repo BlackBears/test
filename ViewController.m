@@ -28,16 +28,6 @@
     [self.tableView reloadData];
 }
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -69,6 +59,7 @@
     [alert show];
     alert.delegate = self;
 }
+
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex != 0 && alertView.tag == 2) {
@@ -83,14 +74,11 @@
         // Save the object to persistent store
         if (![context save:&error]) {
             NSLog(@"Can't Save! %@ %@", error, [error localizedDescription]);
-            
-            
         }
     }
    
-    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"List"];
-    self.lists = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
+    self.lists = [[[self managedObjectContext] executeFetchRequest:fetchRequest error:nil] mutableCopy];
     
     [self.tableView reloadData];
    
