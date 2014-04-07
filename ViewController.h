@@ -11,7 +11,6 @@
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 @property (strong) NSMutableArray *lists;
-@property (strong) NSMutableArray *items;
 
 - (IBAction)add:(id)sender;
 
